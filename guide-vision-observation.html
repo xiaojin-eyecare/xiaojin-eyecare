@@ -270,6 +270,60 @@
             </div>
         </div>
 
+        <!-- 分龄参考数据卡（可折叠） -->
+        <div class="mt-10 text-center">
+            <button onclick="toggleDataCard()" class="px-6 py-3 bg-white border-2 border-emerald-200 text-emerald-700 rounded-full font-medium text-sm hover:bg-emerald-50 transition shadow-sm">
+                📊 查看各年龄段参考值 <span id="dataCardArrow">▾</span>
+            </button>
+        </div>
+        <div id="dataCard" class="mt-6 hidden">
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 overflow-x-auto">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">各年龄段远视储备与眼轴参考值</h3>
+                <p class="text-xs text-slate-400 mb-4">以下为基于大规模筛查数据的参考范围，个体差异较大，具体请以医生判断为准。</p>
+                <table class="w-full text-sm text-left border-collapse">
+                    <thead>
+                        <tr class="border-b-2 border-emerald-200">
+                            <th class="py-3 px-4 font-bold text-slate-700">年龄段</th>
+                            <th class="py-3 px-4 font-bold text-slate-700">远视储备正常范围</th>
+                            <th class="py-3 px-4 font-bold text-slate-700">眼轴年增长警戒线</th>
+                            <th class="py-3 px-4 font-bold text-slate-700">关键提示</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-600">
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4 font-medium">3-5岁</td>
+                            <td class="py-3 px-4">+150 ~ +250度</td>
+                            <td class="py-3 px-4">—</td>
+                            <td class="py-3 px-4 text-xs">学龄前保护期，储备消耗应非常缓慢</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50 bg-amber-50/50">
+                            <td class="py-3 px-4 font-medium">6-7岁</td>
+                            <td class="py-3 px-4">+100 ~ +175度</td>
+                            <td class="py-3 px-4 text-amber-600 font-medium">≤ 0.2mm/年</td>
+                            <td class="py-3 px-4 text-xs">⚠️ 入学后负荷增加，储备消耗加速的窗口期</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4 font-medium">8-9岁</td>
+                            <td class="py-3 px-4">+50 ~ +125度</td>
+                            <td class="py-3 px-4 text-amber-600 font-medium">≤ 0.2mm/年</td>
+                            <td class="py-3 px-4 text-xs">储备低于+50度即进入高危预警</td>
+                        </tr>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="py-3 px-4 font-medium">10-12岁</td>
+                            <td class="py-3 px-4">0 ~ +75度</td>
+                            <td class="py-3 px-4 text-amber-600 font-medium">≤ 0.2mm/年</td>
+                            <td class="py-3 px-4 text-xs">储备归零后，近视发展可能加速</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="mt-4 flex flex-wrap gap-3 text-xs text-slate-400">
+                    <span>📌 来源：《近视防治指南（2024年版）》国卫办医政函〔2024〕168号</span>
+                    <span>📌 眼轴警戒线参考：中华医学会眼科学分会</span>
+                    <span>📌 个体差异大，请以医生评估为准</span>
+                </div>
+            </div>
+        </div>
+
         <div class="mt-12 p-8 bg-emerald-900 text-emerald-50 rounded-2xl flex flex-col md:flex-row justify-between items-center text-center md:text-left">
             <div class="mb-6 md:mb-0">
                 <h4 class="font-bold text-xl mb-2">行动建议：从今天开始建立视力档案</h4>
@@ -438,6 +492,19 @@
     document.getElementById('checklistModal').addEventListener('click', function(e) {
         if (e.target === this) closeChecklist();
     });
+
+    // 5. 分龄参考数据卡折叠
+    function toggleDataCard() {
+        const card = document.getElementById('dataCard');
+        const arrow = document.getElementById('dataCardArrow');
+        if (card.classList.contains('hidden')) {
+            card.classList.remove('hidden');
+            arrow.textContent = '▴';
+        } else {
+            card.classList.add('hidden');
+            arrow.textContent = '▾';
+        }
+    }
 </script>
 </body>
 </html>

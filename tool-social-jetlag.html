@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社交时差计算器 — 小锦护眼</title>
+    <meta name="description" content="作息忽早忽晚，眼轴增长可能正在加速。输入孩子工作日和休息日的作息，算出社交时差和风险等级。">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Noto+Sans+SC', sans-serif;
+            background-color: #fcfaf2;
+            color: #334155;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+<!-- 导航栏 -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <a href="index.html" class="font-bold text-xl text-slate-700 flex items-center hover:text-emerald-600 transition">
+            <span class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white mr-2 text-sm">👁️</span>
+            小锦护眼 <span class="ml-2 text-xs font-normal bg-indigo-100 text-indigo-600 px-2 py-1 rounded">互动工具</span>
+        </a>
+        <a href="index.html" class="text-sm text-slate-500 hover:text-slate-700 transition">← 返回首页</a>
+    </div>
+</nav>
+
+<main class="pt-24 pb-16 px-4">
+
+    <!-- Hero -->
+    <section class="max-w-3xl mx-auto mb-12 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4 leading-tight">社交时差计算器</h1>
+        <p class="text-lg text-slate-500 leading-relaxed">
+            一项追踪了 <strong>1,561 名儿童</strong> 的研究发现：作息忽早忽晚——休息日睡懒觉、平时睡眠不足——眼轴增长速度会显著加快。<br class="hidden sm:block">
+            下滑调整滑块，算算你家孩子的社交时差和风险等级。
+        </p>
+    </section>
+
+    <!-- 计算器 -->
+    <section class="max-w-2xl mx-auto mb-8">
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-10">
+
+            <!-- 年龄选择 -->
+            <div class="mb-8">
+                <label class="block text-sm font-bold text-slate-700 mb-3">孩子年龄</label>
+                <div class="flex flex-wrap gap-2">
+                    <button class="age-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition" data-age="4">4岁</button>
+                    <button class="age-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition" data-age="5">5岁</button>
+                    <button class="age-btn px-4 py-2 rounded-full text-sm font-medium bg-indigo-500 text-white" data-age="6">6岁</button>
+                    <button class="age-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition" data-age="7">7岁</button>
+                    <button class="age-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition" data-age="8">8岁</button>
+                    <button class="age-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition" data-age="9">9岁</button>
+                    <button class="age-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition" data-age="10">10岁</button>
+                    <button class="age-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition" data-age="11">11岁</button>
+                    <button class="age-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition" data-age="12">12岁</button>
+                </div>
+                <input type="hidden" id="childAge" value="6">
+            </div>
+
+            <!-- 工作日 -->
+            <div class="mb-8 p-4 bg-slate-50 rounded-xl">
+                <h3 class="font-bold text-slate-700 mb-4 flex items-center">📅 工作日（上学日）作息</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-2">晚上入睡时间</label>
+                        <input type="range" id="weekdayBed" min="19" max="24" step="0.5" value="21.5" class="w-full accent-indigo-500">
+                        <div class="flex justify-between text-xs text-slate-400 mt-1">
+                            <span>19:00</span><span>21:00</span><span>22:00</span><span>23:00</span><span>24:00</span>
+                        </div>
+                        <p class="text-center text-lg font-bold text-indigo-600 mt-2" id="weekdayBedDisplay">21:30</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-2">早上起床时间</label>
+                        <input type="range" id="weekdayWake" min="5" max="9" step="0.5" value="7" class="w-full accent-indigo-500">
+                        <div class="flex justify-between text-xs text-slate-400 mt-1">
+                            <span>5:00</span><span>6:00</span><span>7:00</span><span>8:00</span><span>9:00</span>
+                        </div>
+                        <p class="text-center text-lg font-bold text-indigo-600 mt-2" id="weekdayWakeDisplay">7:00</p>
+                    </div>
+                </div>
+                <div class="mt-3 text-center">
+                    <span class="text-sm text-slate-500">工作日睡眠时长：</span>
+                    <span class="text-sm font-bold text-indigo-600" id="weekdaySleep">9.5h</span>
+                </div>
+            </div>
+
+            <!-- 休息日 -->
+            <div class="mb-8 p-4 bg-amber-50 rounded-xl">
+                <h3 class="font-bold text-slate-700 mb-4 flex items-center">🏖️ 休息日（周末/假期）作息</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-2">晚上入睡时间</label>
+                        <input type="range" id="weekendBed" min="19" max="24" step="0.5" value="22.5" class="w-full accent-amber-500">
+                        <div class="flex justify-between text-xs text-slate-400 mt-1">
+                            <span>19:00</span><span>21:00</span><span>22:00</span><span>23:00</span><span>24:00</span>
+                        </div>
+                        <p class="text-center text-lg font-bold text-amber-600 mt-2" id="weekendBedDisplay">22:30</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-2">早上起床时间</label>
+                        <input type="range" id="weekendWake" min="5" max="11" step="0.5" value="9" class="w-full accent-amber-500">
+                        <div class="flex justify-between text-xs text-slate-400 mt-1">
+                            <span>5:00</span><span>7:00</span><span>8:00</span><span>9:00</span><span>11:00</span>
+                        </div>
+                        <p class="text-center text-lg font-bold text-amber-600 mt-2" id="weekendWakeDisplay">9:00</p>
+                    </div>
+                </div>
+                <div class="mt-3 text-center">
+                    <span class="text-sm text-slate-500">休息日睡眠时长：</span>
+                    <span class="text-sm font-bold text-amber-600" id="weekendSleep">10.5h</span>
+                </div>
+            </div>
+
+            <!-- 结果面板 -->
+            <div id="resultPanel" class="rounded-2xl p-6 text-center transition-all duration-500 bg-amber-50 border-2 border-amber-200">
+                <div class="text-sm text-slate-500 mb-2">社交时差</div>
+                <div class="text-4xl font-bold mb-2" id="sjlValue">1.5</div>
+                <div class="text-sm text-slate-500 mb-4">小时</div>
+                <div id="riskBadge" class="inline-block px-4 py-2 bg-amber-500 text-white rounded-full text-sm font-bold">🟡 中度风险</div>
+                <div class="mt-4 text-sm p-4 rounded-xl bg-white/60 text-left" id="adviceText">
+                    <p>社交时差在 1-2 小时之间，属于中度风险。休息日补觉说明工作日睡眠不足。建议：</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1 text-slate-600">
+                        <li>工作日尽量提前30分钟入睡</li>
+                        <li>休息日起床时间与工作日差距控制在1小时内</li>
+                        <li>保证每日至少9小时睡眠</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 解释卡片 -->
+    <section class="max-w-2xl mx-auto mb-12">
+        <div class="bg-white/60 rounded-xl p-6 border border-slate-100">
+            <h3 class="font-bold text-slate-700 mb-3">📖 什么是社交时差？</h3>
+            <p class="text-sm text-slate-500 leading-relaxed mb-3">
+                社交时差 = 休息日睡眠中点与工作日睡眠中点的差值。<br>
+                简单说就是：<strong>休息日作息与工作日作息"错位"了多少个小时。</strong>
+            </p>
+            <p class="text-sm text-slate-500 leading-relaxed mb-3">
+                <strong>睡眠中点</strong> = 入睡时间 + 睡眠时长 ÷ 2。比如晚上9:30睡、早上7:00起，睡眠中点就是凌晨2:15。
+            </p>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                数据来源：Sleep Duration, Sleep Habits, and Social Jetlag From 4 to 6 Years: Their Impacts on Myopia Among School-Aged Children — <em>Nature and Science of Sleep</em>, 2025. Ma'anshan Birth Cohort, n=1,561. DOI: <a href="https://doi.org/10.2147/NSS.S500191" class="text-indigo-500 underline" target="_blank">10.2147/NSS.S500191</a>
+            </p>
+        </div>
+    </section>
+
+</main>
+
+<footer class="bg-slate-100 py-12 border-t border-slate-200">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+        <p class="text-slate-500 font-medium">© 2026 小锦护眼 | 专注儿童视力健康</p>
+        <p class="text-slate-400 text-xs mt-1 mb-3">一名三岁孩子的妈妈 · 儿童视力健康从业者</p>
+        <p class="text-slate-300 text-xs max-w-xl mx-auto leading-relaxed">本工具仅为风险提示，不构成诊疗建议。儿童视力问题请前往正规医疗机构就诊。</p>
+        <div class="mt-6">
+            <a href="index.html" class="text-emerald-600 hover:text-emerald-500 text-sm transition">← 返回小锦护眼首页</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // 年龄选择
+    const ageBtns = document.querySelectorAll('.age-btn');
+    const childAgeInput = document.getElementById('childAge');
+    ageBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            ageBtns.forEach(b => { b.className = 'age-btn px-4 py-2 rounded-full text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition'; });
+            this.className = 'age-btn px-4 py-2 rounded-full text-sm font-medium bg-indigo-500 text-white';
+            childAgeInput.value = this.dataset.age;
+            updateResult();
+        });
+    });
+
+    // 时间滑块
+    const sliders = {
+        weekdayBed: document.getElementById('weekdayBed'),
+        weekdayWake: document.getElementById('weekdayWake'),
+        weekendBed: document.getElementById('weekendBed'),
+        weekendWake: document.getElementById('weekendWake')
+    };
+
+    const displays = {
+        weekdayBed: document.getElementById('weekdayBedDisplay'),
+        weekdayWake: document.getElementById('weekdayWakeDisplay'),
+        weekendBed: document.getElementById('weekendBedDisplay'),
+        weekendWake: document.getElementById('weekendWakeDisplay')
+    };
+
+    function timeToStr(val) {
+        const h = Math.floor(val);
+        const m = (val - h) === 0.5 ? '30' : '00';
+        return h + ':' + m;
+    }
+
+    function updateResult() {
+        // 更新显示
+        Object.keys(sliders).forEach(key => {
+            displays[key].textContent = timeToStr(parseFloat(sliders[key].value));
+        });
+
+        const wdB = parseFloat(sliders.weekdayBed.value);
+        const wdW = parseFloat(sliders.weekdayWake.value);
+        const weB = parseFloat(sliders.weekendBed.value);
+        const weW = parseFloat(sliders.weekendWake.value);
+
+        // 工作日睡眠时长（考虑跨夜）
+        let wdSleep = wdW - wdB;
+        if (wdSleep < 0) wdSleep += 24;
+        document.getElementById('weekdaySleep').textContent = wdSleep.toFixed(1) + 'h';
+
+        // 休息日睡眠时长
+        let weSleep = weW - weB;
+        if (weSleep < 0) weSleep += 24;
+        document.getElementById('weekendSleep').textContent = weSleep.toFixed(1) + 'h';
+
+        // 社交时差 = |周末睡眠中点 - 工作日睡眠中点|
+        const wdMid = (wdB + wdSleep / 2) % 24;
+        const weMid = (weB + weSleep / 2) % 24;
+        let sjl = Math.abs(weMid - wdMid);
+        if (sjl > 12) sjl = 24 - sjl;
+
+        document.getElementById('sjlValue').textContent = sjl.toFixed(1);
+
+        // 风险等级
+        const panel = document.getElementById('resultPanel');
+        const badge = document.getElementById('riskBadge');
+        const advice = document.getElementById('adviceText');
+        const age = parseInt(childAgeInput.value);
+
+        let riskLevel, riskColor, panelBg, panelBorder, adviceHTML;
+
+        if (sjl < 0.5) {
+            riskLevel = '🟢 低风险';
+            riskColor = 'bg-emerald-500';
+            panelBg = 'bg-emerald-50';
+            panelBorder = 'border-emerald-200';
+            adviceHTML = `
+                <p class="font-medium text-emerald-800">太棒了！孩子作息很规律，社交时差不到半小时。</p>
+                <ul class="list-disc pl-5 mt-2 space-y-1 text-slate-600">
+                    <li>保持现状，继续维持工作日和休息日一致的作息</li>
+                    <li>${age <= 6 ? '学龄前' : '小学阶段'}建议每日睡眠 ${age <= 6 ? '10-13小时' : '9-11小时'}</li>
+                    <li>规律的生物钟有利于视网膜多巴胺的正常节律分泌</li>
+                </ul>`;
+        } else if (sjl < 1.5) {
+            riskLevel = '🟡 轻度偏移';
+            riskColor = 'bg-amber-500';
+            panelBg = 'bg-amber-50';
+            panelBorder = 'border-amber-200';
+            adviceHTML = `
+                <p class="font-medium text-amber-800">社交时差在 0.5-1.5 小时之间。研究显示，4岁时社交时差≥1小时的儿童，学龄期近视风险已开始升高。</p>
+                <ul class="list-disc pl-5 mt-2 space-y-1 text-slate-600">
+                    <li>休息日别让孩子睡懒觉超过平时1小时</li>
+                    <li>如果工作日睡得不够，优先调整工作日入睡时间</li>
+                    <li>${wdSleep < 9 ? '⚠️ 工作日睡眠不足9小时，需要引起注意' : '✅ 工作日睡眠时长达标'}</li>
+                </ul>`;
+        } else if (sjl < 2.5) {
+            riskLevel = '🟠 中度风险';
+            riskColor = 'bg-orange-500';
+            panelBg = 'bg-orange-50';
+            panelBorder = 'border-orange-200';
+            adviceHTML = `
+                <p class="font-medium text-orange-800">社交时差超过 1.5 小时！马鞍山队列研究（n=1,561）发现，社交时差越大，眼轴增长越快。</p>
+                <ul class="list-disc pl-5 mt-2 space-y-1 text-slate-600">
+                    <li><strong>首要目标：</strong>把休息日起床时间往前调，与工作日差距缩到1小时内</li>
+                    <li>工作日睡眠不足靠"提前睡"来补，不靠"周末补觉"</li>
+                    <li>${wdSleep < 9 ? '🔴 工作日睡眠严重不足，建议每晚提前30分钟熄灯' : '尽量保证工作日和休息日入睡时间一致'}</li>
+                </ul>`;
+        } else {
+            riskLevel = '🔴 高风险';
+            riskColor = 'bg-rose-500';
+            panelBg = 'bg-rose-50';
+            panelBorder = 'border-rose-200';
+            adviceHTML = `
+                <p class="font-medium text-rose-800">社交时差超过 2.5 小时，处于高风险区间！作息严重紊乱，眼轴加速增长的风险不容忽视。</p>
+                <ul class="list-disc pl-5 mt-2 space-y-1 text-slate-600">
+                    <li><strong>立即行动：</strong>休息日最晚起床不超过工作日+1.5小时</li>
+                    <li>工作日每晚固定熄灯时间，建立睡前仪式（如阅读、关屏）</li>
+                    <li>${wdSleep < 9 ? '🔴 工作日睡眠严重不足，这本身就在独立推高近视风险' : ''}</li>
+                    <li>下次复查时，把作息情况告诉医生</li>
+                </ul>`;
+        }
+
+        badge.textContent = riskLevel;
+        badge.className = 'inline-block px-4 py-2 text-white rounded-full text-sm font-bold ' + riskColor;
+        panel.className = 'rounded-2xl p-6 text-center transition-all duration-500 border-2 ' + panelBg + ' ' + panelBorder;
+        advice.innerHTML = adviceHTML;
+    }
+
+    Object.values(sliders).forEach(s => s.addEventListener('input', updateResult));
+    updateResult();
+</script>
+</body>
+</html>
