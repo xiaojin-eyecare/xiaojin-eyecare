@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿童视力观察期实操指南 — 小锦护眼</title>
+    <meta name="description" content="医生说"先观察"，但这三个月具体该做什么？远视储备、眼轴、脉络膜——盯住这三个数字，把握真正的干预期。">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        body {
+            font-family: 'Noto+Sans+SC', sans-serif;
+            background-color: #fcfaf2;
+            color: #334155;
+            scroll-behavior: smooth;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #94a3b8;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* 建档清单弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+<!-- 导航栏 -->
+<nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm">
+    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <a href="index.html" class="font-bold text-xl text-slate-700 flex items-center hover:text-emerald-600 transition">
+            <span class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white mr-2 text-sm">👁️</span>
+            小锦护眼 <span class="ml-2 text-xs font-normal bg-slate-100 px-2 py-1 rounded text-slate-500">观察期指南</span>
+        </a>
+        <div class="hidden md:flex space-x-8 text-sm font-medium">
+            <a href="#section-reserve" class="nav-link text-slate-600">远视储备</a>
+            <a href="#section-habits" class="nav-link text-slate-600">四维干预</a>
+            <a href="#section-risk" class="nav-link text-slate-600">风险自测</a>
+            <a href="#section-monitor" class="nav-link text-slate-600">监测建档</a>
+        </div>
+    </div>
+</nav>
+
+<main class="pt-24 pb-16 px-4">
+    <!-- Hero 头部 -->
+    <section class="max-w-6xl mx-auto mb-16 text-center">
+        <p class="text-sm text-emerald-600 font-medium mb-3">📋 短视频配套深度指南</p>
+        <h1 class="text-3xl md:text-5xl font-bold text-slate-800 mb-6 leading-tight">科学护眼，精准建档</h1>
+        <p class="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+            当医生说"先观察"的时候，这三个月具体该做什么？<br>
+            本指南帮你盯住<strong class="text-slate-700">远视储备、眼轴长度、脉络膜厚度</strong>三个关键数字，<br class="hidden sm:block">在真正的干预期里，把能做的事都做了。
+        </p>
+    </section>
+
+    <!-- 模块1：远视储备数据解读 -->
+    <section id="section-reserve" class="max-w-6xl mx-auto mb-20 scroll-mt-24">
+        <div class="glass-card p-8 shadow-sm">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4 border-l-4 border-emerald-500 pl-4">远视储备：核心预警指标</h2>
+            <p class="mb-8 text-slate-600 leading-relaxed">
+                远视储备是孩子眼睛自带的"视力存款"。储备耗尽不等于已经近视，但意味着前方没有任何缓冲了——离真性近视只有一步之遥。本模块展示 3-12 岁儿童的储备金消耗曲线，帮助你判断孩子是否在异常提前透支。
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                <div class="lg:col-span-2">
+                    <div class="chart-container">
+                        <canvas id="reserveChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white/50 p-6 rounded-xl border border-slate-100">
+                    <h3 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wider">交互指南</h3>
+                    <p class="text-sm text-slate-500 mb-4">7岁前后是储备消耗的分水岭。若储备低于 +50 度（图中黄线区域），说明已进入高危预警阶段，需要立即启动下方四维干预。</p>
+                    <div class="space-y-3">
+                        <div class="flex items-center text-sm">
+                            <span class="w-3 h-3 rounded-full bg-emerald-400 mr-2"></span>
+                            <span>健康曲线：自然平缓下降</span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <span class="w-3 h-3 rounded-full bg-amber-400 mr-2"></span>
+                            <span>警戒水位：高危预警区</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块2：四维行为干预 -->
+    <section id="section-habits" class="max-w-6xl mx-auto mb-20 scroll-mt-24">
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4">核心干预：构建护眼微环境</h2>
+            <p class="text-slate-500">观察期不是"什么都不做"。户外光照、用眼距离、间歇休息和睡眠节律——四个维度一起抓，才能守住眼轴不往前跑。</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="glass-card p-6 text-center border-t-4 border-amber-400">
+                <div class="text-4xl mb-4">☀️</div>
+                <h3 class="font-bold text-lg mb-2">每日户外 2H</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">累计2小时以上户外活动，接受自然光照（≥1000 lux），刺激视网膜多巴胺分泌，是延缓眼轴增长的最强保护因素。</p>
+            </div>
+            <div class="glass-card p-6 text-center border-t-4 border-emerald-400">
+                <div class="text-4xl mb-4">📏</div>
+                <h3 class="font-bold text-lg mb-2">3-3-1 原则</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">一尺一拳一寸——通过物理距离管理，降低眼内睫状肌的调节负荷，减少"调节滞后"带来的模糊信号。</p>
+            </div>
+            <div class="glass-card p-6 text-center border-t-4 border-blue-400">
+                <div class="text-4xl mb-4">⏲️</div>
+                <h3 class="font-bold text-lg mb-2">20-20-20</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">每近距离用眼20分钟，抬头远眺20英尺（约6米）外的物体至少20秒，给睫状肌一个放松窗口。</p>
+            </div>
+            <div class="glass-card p-6 text-center border-t-4 border-indigo-500 bg-indigo-50/20">
+                <div class="text-4xl mb-4">🌙</div>
+                <h3 class="font-bold text-lg mb-2">守住睡眠节律</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">小学生应睡足9-10小时。<strong>警惕"社交时差"</strong>：休息日睡懒觉、平时睡眠不足，作息忽早忽晚会加速眼轴增长（马鞍山出生队列研究，n=1,561）。</p>
+            </div>
+        </div>
+
+        <div class="mt-12 glass-card p-8">
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <div class="flex-1">
+                    <h3 class="text-xl font-bold mb-4">干预要素效能对比</h3>
+                    <p class="text-sm text-slate-500 mb-4">户外光照与优质睡眠的组合能抵消约 60% 的近距离用眼损伤。睡眠不足不仅直接影响多巴胺节律，还常伴随晚间用眼时间增加——是视力恶化的隐形推手。</p>
+                    <p class="text-xs text-slate-400 italic">数据来源：Nature and Science of Sleep, 2025; 近视防治指南（2024年版）</p>
+                </div>
+                <div class="chart-container !h-[250px] md:!w-[300px]">
+                    <canvas id="weightChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块3：风险评估 -->
+    <section id="section-risk" class="max-w-3xl mx-auto mb-20 scroll-mt-24">
+        <div class="bg-slate-800 text-white rounded-2xl p-8 shadow-xl">
+            <h2 class="text-2xl font-bold mb-6 text-center">视力风险指数快速自测</h2>
+            <p class="text-sm text-slate-400 text-center mb-6">以下评估仅为风险提示，不能替代专业眼科检查。建议每3个月带孩子做一次全面检查。</p>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium mb-3">1. 平均每日睡眠时长（小时）</label>
+                    <input type="range" id="sleepRange" min="5" max="11" step="1" value="8" class="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-indigo-400">
+                    <div class="flex justify-between text-xs text-slate-400 mt-2">
+                        <span>≤7h（不足）</span>
+                        <span>8h</span>
+                        <span>9-10h（达标）</span>
+                        <span>11h+</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label class="flex items-center space-x-3 bg-slate-700 p-3 rounded-lg cursor-pointer hover:bg-slate-600 transition border border-transparent hover:border-slate-500">
+                        <input type="checkbox" class="risk-check w-4 h-4 rounded text-emerald-500" value="25">
+                        <span class="text-sm">远视储备低于同龄标准</span>
+                    </label>
+                    <label class="flex items-center space-x-3 bg-slate-700 p-3 rounded-lg cursor-pointer hover:bg-slate-600 transition border border-transparent hover:border-slate-500">
+                        <input type="checkbox" class="risk-check w-4 h-4 rounded text-emerald-500" value="15">
+                        <span class="text-sm">经常在晚上10点后学习</span>
+                    </label>
+                    <label class="flex items-center space-x-3 bg-slate-700 p-3 rounded-lg cursor-pointer hover:bg-slate-600 transition border border-transparent hover:border-slate-500">
+                        <input type="checkbox" class="risk-check w-4 h-4 rounded text-emerald-500" value="15">
+                        <span class="text-sm">父母至少一方高度近视</span>
+                    </label>
+                    <label class="flex items-center space-x-3 bg-slate-700 p-3 rounded-lg cursor-pointer hover:bg-slate-600 transition border border-transparent hover:border-slate-500">
+                        <input type="checkbox" class="risk-check w-4 h-4 rounded text-emerald-500" value="10">
+                        <span class="text-sm">每日户外不足1小时</span>
+                    </label>
+                </div>
+
+                <div class="mt-10 pt-6 border-t border-slate-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-lg font-bold">综合风险评分:</span>
+                        <span id="riskLevelText" class="px-3 py-1 bg-amber-500 rounded text-xs">中度关注</span>
+                    </div>
+                    <div class="w-full h-4 bg-slate-700 rounded-full overflow-hidden">
+                        <div id="riskBar" class="h-full bg-gradient-to-r from-emerald-400 via-amber-400 to-rose-500 transition-all duration-500" style="width: 50%;"></div>
+                    </div>
+                    <p id="riskAdvice" class="text-sm text-slate-400 mt-4 italic leading-relaxed">"建议：保证睡眠充足，并尽早建立视力档案。"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 模块4：监测与建档 -->
+    <section id="section-monitor" class="max-w-6xl mx-auto scroll-mt-24">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">观察期盯住三个数字</h2>
+            <p class="text-slate-500 text-sm">复查时不要只问"近视了没有"——这三个指标才是孩子眼睛真正的家底</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-emerald-500">
+                <span class="text-xs font-bold text-emerald-500 uppercase">核心指标 01</span>
+                <h4 class="text-lg font-bold mt-2">远视储备</h4>
+                <p class="text-sm text-slate-500 mt-2">"视力存款"。余额见底时每3个月查一次，看还剩多少、掉了多少。存款归零 = 离近视一步之遥。</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-amber-400">
+                <span class="text-xs font-bold text-amber-500 uppercase">核心指标 02</span>
+                <h4 class="text-lg font-bold mt-2">眼轴长度</h4>
+                <p class="text-sm text-slate-500 mt-2">眼球的"身高"。发育期年增长应控制在 0.2mm 以内。超过0.2mm/年即属进展性，需高度重视。</p>
+                <p class="text-xs text-slate-400 mt-1">来源：近视防治指南（2024年版）</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-indigo-400">
+                <span class="text-xs font-bold text-indigo-500 uppercase">核心指标 03</span>
+                <h4 class="text-lg font-bold mt-2">脉络膜厚度</h4>
+                <p class="text-sm text-slate-500 mt-2">眼轴增长前的"黄灯"。脉络膜一旦变薄，眼轴紧跟着就可能拉长。比度数更灵敏的早期预警信号。</p>
+                <p class="text-xs text-slate-400 mt-1">来源：梁刚, 潘臣炜, 中国学校卫生, 2024</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-slate-300">
+                <span class="text-xs font-bold text-slate-400 uppercase">辅助参考</span>
+                <h4 class="text-lg font-bold mt-2">角膜曲率 + 等效球镜</h4>
+                <p class="text-sm text-slate-500 mt-2">用于分析屈光构成，判断度数变化是结构性增长还是功能性疲劳。配合前三个指标综合判断。</p>
+            </div>
+        </div>
+
+        <div class="mt-12 p-8 bg-emerald-900 text-emerald-50 rounded-2xl flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <div class="mb-6 md:mb-0">
+                <h4 class="font-bold text-xl mb-2">行动建议：从今天开始建立视力档案</h4>
+                <p class="text-emerald-300 text-sm max-w-xl">档案应包含：远视储备追踪、眼轴长度记录、行为日志（户外时长/睡眠/近距离用眼）。点击右侧按钮获取可打印的建档清单。</p>
+            </div>
+            <button onclick="openChecklist()" class="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full font-bold transition shadow-xl transform active:scale-95 whitespace-nowrap">
+                📋 获取建档清单
+            </button>
+        </div>
+    </section>
+</main>
+
+<!-- 建档清单弹窗 -->
+<div class="modal-overlay" id="checklistModal">
+    <div class="modal-content">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-slate-800">📋 视力观察期建档清单</h3>
+            <button onclick="closeChecklist()" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+        </div>
+        <div id="checklistContent" class="text-sm text-slate-700 leading-relaxed space-y-3">
+            <p><strong>每3个月检查一次，记录以下项目：</strong></p>
+            <ol class="list-decimal pl-5 space-y-2">
+                <li><strong>远视储备（建议散瞳后检查）</strong><br>记录剩余度数，对比上次变化。若3个月内下降超过25度，需要警惕。</li>
+                <li><strong>眼轴长度</strong><br>记录双眼数值。年增长速度控制在 0.2mm 以内为佳。</li>
+                <li><strong>脉络膜厚度</strong><br>如设备允许，请医生协助测量。变薄趋势是眼轴增长的前哨信号。</li>
+                <li><strong>行为日志</strong><br>每天记录：户外时长（目标≥2h）、睡眠时长（目标≥9h）、近距离用眼时长。</li>
+            </ol>
+            <p class="text-slate-400 text-xs mt-4">⚠️ 本清单为辅助工具，不构成诊疗建议。具体检查频率和项目请遵医嘱，因为每个孩子情况不同。</p>
+        </div>
+        <div class="mt-6 flex gap-3 justify-end">
+            <button onclick="window.print()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm transition">🖨️ 打印清单</button>
+            <button onclick="closeChecklist()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-white rounded-lg text-sm transition">关闭</button>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-slate-100 py-12 mt-20 border-t border-slate-200">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+        <p class="text-slate-500 font-medium">© 2026 小锦护眼 | 专注儿童视力健康</p>
+        <p class="text-slate-400 text-xs mt-1 mb-3">一名三岁孩子的妈妈 · 儿童视力健康从业者</p>
+        <p class="text-slate-300 text-xs max-w-xl mx-auto leading-relaxed">本文内容不构成诊疗建议，不能替代专业医疗意见。所有数据建议仅供参考，涉及具体检查和治疗方案请务必前往正规医疗机构，遵循眼科医生的专业诊断。每个孩子情况不同，请以医生的判断为准。</p>
+        <div class="mt-6">
+            <a href="index.html" class="text-emerald-600 hover:text-emerald-500 text-sm transition">← 返回小锦护眼首页</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // 1. 远视储备图表
+    const ctxReserve = document.getElementById('reserveChart').getContext('2d');
+    new Chart(ctxReserve, {
+        type: 'line',
+        data: {
+            labels: ['3岁', '4岁', '5岁', '6岁', '7岁', '8岁', '9岁', '10岁', '11岁', '12岁'],
+            datasets: [
+                {
+                    label: '正常生理均值 (+度)',
+                    data: [200, 175, 150, 125, 100, 75, 50, 25, 0, -25],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3
+                },
+                {
+                    label: '高危预警线 (+度)',
+                    data: [100, 80, 60, 40, 20, 0, -50, -100, -150, -200],
+                    borderColor: '#f59e0b',
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    pointRadius: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', labels: { boxWidth: 20, font: { size: 12 } } }
+            },
+            scales: {
+                y: {
+                    grid: { color: '#f1f5f9' },
+                    title: { display: true, text: '远视储备 (度)', font: { size: 11 } }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // 2. 干预权重图表 (包含睡眠)
+    const ctxWeight = document.getElementById('weightChart').getContext('2d');
+    new Chart(ctxWeight, {
+        type: 'doughnut',
+        data: {
+            labels: ['户外光照', '用眼距离', '睡眠节律', '用眼时长', '环境灯光'],
+            datasets: [{
+                data: [40, 20, 20, 10, 10],
+                backgroundColor: ['#10b981', '#6366f1', '#4f46e5', '#94a3b8', '#cbd5e1'],
+                borderWidth: 0,
+                hoverOffset: 12
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 15, usePointStyle: true, font: { size: 11 } } }
+            }
+        }
+    });
+
+    // 3. 风险评估逻辑
+    const sleepInput = document.getElementById('sleepRange');
+    const checkboxes = document.querySelectorAll('.risk-check');
+    const riskBar = document.getElementById('riskBar');
+    const riskLevelText = document.getElementById('riskLevelText');
+    const riskAdvice = document.getElementById('riskAdvice');
+
+    function updateRisk() {
+        let score = 0;
+
+        // 睡眠得分 (10h为标准，不足则得分增加风险)
+        const sleepVal = parseInt(sleepInput.value);
+        score += (10 - sleepVal) * 10;
+
+        // 其他加分项
+        checkboxes.forEach(cb => {
+            if (cb.checked) score += parseInt(cb.value);
+        });
+
+        // 最终修正并映射到进度条
+        const totalScore = Math.max(10, Math.min(score + 20, 100));
+        riskBar.style.width = totalScore + '%';
+
+        if (totalScore < 40) {
+            riskLevelText.innerText = '风险较低';
+            riskLevelText.className = 'px-3 py-1 bg-emerald-500 rounded text-xs text-white';
+            riskAdvice.innerText = '"当前风险较低。建议保持现状，每3-6个月定期复查远视储备和眼轴，维持每日户外2小时和充足睡眠。"';
+        } else if (totalScore < 75) {
+            riskLevelText.innerText = '中度关注';
+            riskLevelText.className = 'px-3 py-1 bg-amber-500 rounded text-xs text-white';
+            riskAdvice.innerText = '"建议引起重视：重点增加户外活动（目标每日2小时），保证至少9小时睡眠，避免晚间过长的近距离用眼。下次复查时请医生关注远视储备和眼轴变化。"';
+        } else {
+            riskLevelText.innerText = '高度预警';
+            riskLevelText.className = 'px-3 py-1 bg-rose-500 rounded text-xs text-white';
+            riskAdvice.innerText = '"远视储备可能已严重不足，建议尽快带孩子去正规眼科机构做散瞳验光，检查远视储备和眼轴长度，并与医生讨论个性化干预方案。"';
+        }
+    }
+
+    sleepInput.addEventListener('input', updateRisk);
+    checkboxes.forEach(cb => cb.addEventListener('change', updateRisk));
+    updateRisk();
+
+    // 4. 建档清单弹窗
+    function openChecklist() {
+        document.getElementById('checklistModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeChecklist() {
+        document.getElementById('checklistModal').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    // 点击遮罩关闭
+    document.getElementById('checklistModal').addEventListener('click', function(e) {
+        if (e.target === this) closeChecklist();
+    });
+</script>
+</body>
+</html>
